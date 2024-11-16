@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Streaming de Dados do Sensor</title>
+    <style>
+        /* Definindo o fundo da tela como azul suave */
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #B0C4DE; /* Azul claro */
+          margin: 0;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          min-height: 100vh;
+        }
+        /* Estilizando o botão de voltar */
+        .btn-voltar {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background-color: #1E3A8A; /* Azul escuro */
+        color: white;
+        font-size: 1.5rem;
+        padding: 10px;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s ease;
+        text-decoration: none;
+        }
+
+        .btn-voltar:hover {
+        background-color: #172e61; /* Cor um pouco mais escura ao passar o mouse */
+        }
+
+        /* Ícone de seta */
+        .btn-voltar i {
+        font-size: 1.5rem;
+        margin-left: 5px;
+        }
+    
+        /* Estilizando o título */
+        h1 {
+          color: #2F4F4F; /* Cor escura para o título */
+          text-align: center;
+          margin-bottom: 90px;
+        }
+    
+        /* Criando o grid 2x2 para os sensores */
+        .sensor-container {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr); /* 2 colunas */
+          grid-gap: 60px; /* Espaçamento entre os sensores */
+          width: 80%;
+          max-width: 800px;
+          margin: 0 auto;
+        }
+    
+        /* Estilo para cada sensor */
+        .sensor {
+          background-color: #1E3A8A; /* Azul escuro */
+          border-radius: 100%; /* Formato circular */
+          padding: 80px;
+          text-align: center;
+          color: white;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+          transition: transform 0.3s ease; /* Efeito suave ao passar o mouse */
+        }
+    
+        .sensor:hover {
+          transform: scale(1.05); /* Efeito de aumento ao passar o mouse */
+        }
+    
+        .sensor h3 {
+          margin: 0;
+          font-size: 1.2rem;
+        }
+    
+        .sensor p {
+          font-size: 1.5rem;
+          margin-top: 50px;
+        }
+    
+        /* Responsividade para telas menores */
+        @media (max-width: 600px) {
+          .sensor-container {
+            grid-template-columns: 1fr; /* 1 coluna em telas pequenas */
+          }
+    
+          .sensor p {
+            font-size: 1.2rem; /* Reduzir o tamanho da fonte em telas pequenas */
+          }
+        }
+    </style>
+</head>
+<body>
+    <!-- Botão de Voltar -->
+    <a href="/" class="btn-voltar">
+        &#8592; <!-- Ícone de seta -->
+    </a>
+    <h1>Dados em Tempo Real</h1>
+
+    <div class="sensor-container">
+      <div id="sensor1" class="sensor">
+        <h3>Sensor HIGR (Umidade)</h3>
+        <p id="value1">Aguardando...</p>
+      </div>
+      <div id="sensor2" class="sensor">
+        <h3>Sensor NTC (Temperatura)</h3>
+        <p id="value2">Aguardando...</p>
+      </div>
+      <div id="sensor3" class="sensor">
+        <h3>Sensor MQ7 (CO)</h3>
+        <p id="value3">Aguardando...</p>
+      </div>
+      <div id="sensor4" class="sensor">
+        <h3>Sensor LDR (Luminosidade)</h3>
+        <p id="value4">Aguardando...</p>
+      </div>
+    </div>     
+
+    <script>
+        // Conexão com o WebSocket
+        const socket = new WebSocket("ws://localhost:8000/ws/sensor-data");
+
+        // Função que atualiza o display dos sensores
+        function updateSensorDisplay(sensorId, value) {
+        const valueElement = document.getElementById(`value${sensorId}`);
+        valueElement.textContent = value;
+        }
+
+        // Quando a conexão WebSocket for estabelecida
+        socket.onopen = () => {
+        console.log("Conexão WebSocket estabelecida");
+        };
+
+        // Quando receber dados do servidor (via WebSocket)
+        socket.onmessage = (event) => {
+        try {
+            console.log("Dados recebidos do servidor:", event.data); // Adicionado para depuração
+            const sensorDataList = JSON.parse(event.data);
+            
+            // Exemplo de estrutura de dados esperada:
+            // [
+            //   {"sensor_type": "HIGR", "measure_type": "UMIDADE", "measure_value": 75.0, "timestamp": "2024-11-08T21:02:53.750491"},
+            //   {"sensor_type": "NTC", "measure_type": "TEMPERATURA", "measure_value": 25.0, "timestamp": "2024-11-08T21:02:53.756493"},
+            //   {"sensor_type": "MQ7", "measure_type": "CO", "measure_value": 475.0, "timestamp": "2024-11-08T21:02:53.763664"},
+            //   {"sensor_type": "LDR", "measure_type": "LUMINOSIDADE", "measure_value": 665.0, "timestamp": "2024-11-08T21:02:53.770653"}
+            // ]
+
+            // Para atualizar os valores dos sensores na tela:
+            sensorDataList.forEach(sensorData => {
+            console.log("Sensor Data:", sensorData); // Adicionado para depuração
+
+            switch (sensorData.sensor_type) {
+                case 'HIGR': // Umidade
+                updateSensorDisplay(1, `${sensorData.measure_value} %`);
+                break;
+                case 'NTC': // Temperatura
+                updateSensorDisplay(2, `${sensorData.measure_value} °C`);
+                break;
+                case 'MQ7': // CO
+                updateSensorDisplay(3, `${sensorData.measure_value} PPM`);
+                break;
+                case 'LDR': // Luminosidade
+                updateSensorDisplay(4, `${sensorData.measure_value} Lm`);
+                break;
+                default:
+                console.log("Sensor desconhecido:", sensorData);
+            }
+            });
+
+        } catch (error) {
+            console.error("Erro ao processar dados do WebSocket:", error);
+        }
+        };
+
+        // Quando a conexão WebSocket for fechada
+        socket.onclose = () => {
+        console.log("Conexão WebSocket fechada");
+        };
+
+
+    </script>
+</body>
+</html>

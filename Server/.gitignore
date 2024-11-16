@@ -1,0 +1,7 @@
+# .gitignore
+.env
+/tesis
+__pycache__/
+venv/
+/data
+/images

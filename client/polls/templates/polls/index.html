@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dataset Monitoring</title>
+  <style>
+    /* Definindo o fundo da tela como azul suave */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #B0C4DE; /* Azul claro */
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    /* Estilizando o título */
+    h1, h2 {
+      color: #2F4F4F; /* Cor escura para o título */
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* Estilo para o parágrafo de introdução */
+    p {
+      color: #333;
+      text-align: center;
+      font-size: 1.2rem;
+      width: 80%;
+      max-width: 700px;
+      margin-bottom: 80px;
+    }
+
+    /* Estilizando o botão */
+    .btn-monitoramento {
+      background-color: #1E3A8A; /* Azul escuro */
+      color: white;
+      font-size: 1.2rem;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-monitoramento:hover {
+      background-color: #172e61; /* Cor um pouco mais escura ao passar o mouse */
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>Protótipo de monitoramento de datasets</h1>
+
+  <h2>Sobre o Projeto</h2>
+  <p>
+    Este projeto visa coletar dados de diversos sensores em tempo real e monitorar as informações como umidade, temperatura, CO e luminosidade. 
+    Utilizamos tecnologias como WebSocket para fornecer os dados em tempo real e exibi-los de forma dinâmica.
+  </p>
+
+  <a href="/stream" class="btn-monitoramento">Monitoramento</a>
+
+</body>
+</html>
